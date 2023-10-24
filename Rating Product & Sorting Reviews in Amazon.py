@@ -1,85 +1,87 @@
-
 ###################################################
-# PROJE: Rating Product & Sorting Reviews in Amazon
-###################################################
-
-###################################################
-# İş Problemi
+# PROJECT: Rating Product & Sorting Reviews in Amazon
 ###################################################
 
-# E-ticaretteki en önemli problemlerden bir tanesi ürünlere satış sonrası verilen puanların doğru şekilde hesaplanmasıdır.
-# Bu problemin çözümü e-ticaret sitesi için daha fazla müşteri memnuniyeti sağlamak, satıcılar için ürünün öne çıkması ve satın
-# alanlar için sorunsuz bir alışveriş deneyimi demektir. Bir diğer problem ise ürünlere verilen yorumların doğru bir şekilde sıralanması
-# olarak karşımıza çıkmaktadır. Yanıltıcı yorumların öne çıkması ürünün satışını doğrudan etkileyeceğinden dolayı hem maddi kayıp
-# hem de müşteri kaybına neden olacaktır. Bu 2 temel problemin çözümünde e-ticaret sitesi ve satıcılar satışlarını arttırırken müşteriler
-# ise satın alma yolculuğunu sorunsuz olarak tamamlayacaktır.
-
 ###################################################
-# Veri Seti Hikayesi
+# Business Problem
 ###################################################
 
-# Amazon ürün verilerini içeren bu veri seti ürün kategorileri ile çeşitli metadataları içermektedir.
-# Elektronik kategorisindeki en fazla yorum alan ürünün kullanıcı puanları ve yorumları vardır.
-
-# Değişkenler:
-# reviewerID: Kullanıcı ID’si
-# asin: Ürün ID’si
-# reviewerName: Kullanıcı Adı
-# helpful: Faydalı değerlendirme derecesi
-# reviewText: Değerlendirme
-# overall: Ürün rating’i
-# summary: Değerlendirme özeti
-# unixReviewTime: Değerlendirme zamanı
-# reviewTime: Değerlendirme zamanı Raw
-# day_diff: Değerlendirmeden itibaren geçen gün sayısı
-# helpful_yes: Değerlendirmenin faydalı bulunma sayısı
-# total_vote: Değerlendirmeye verilen oy sayısı
-
-
+# One of the most important problems in e-commerce is accurately calculating the ratings given to products after sales.
+# Solving this problem means providing more customer satisfaction for the e-commerce site, highlighting the product for sellers,
+# and ensuring a seamless shopping experience for buyers. Another problem is sorting the reviews given to products correctly,
+# misleading reviews coming to the forefront will directly affect the product's sales, causing both financial loss and customer loss.
+# Solving these 2 fundamental problems will increase sales for e-commerce sites and sellers, and customers will complete their
+# purchasing journey seamlessly.
 
 ###################################################
-# GÖREV 1: Average Rating'i Güncel Yorumlara Göre Hesaplayınız ve Var Olan Average Rating ile Kıyaslayınız.
+# Data Set Story
 ###################################################
 
-# Paylaşılan veri setinde kullanıcılar bir ürüne puanlar vermiş ve yorumlar yapmıştır.
-# Bu görevde amacımız verilen puanları tarihe göre ağırlıklandırarak değerlendirmek.
-# İlk ortalama puan ile elde edilecek tarihe göre ağırlıklı puanın karşılaştırılması gerekmektedir.
+# This dataset containing Amazon product data includes various metadata along with product categories.
+# The product with the most reviews in the Electronics category has user ratings and reviews.
+
+# Variables:
+# reviewerID: User ID
+# asin: Product ID
+# reviewerName: User Name
+# helpful: Helpful review rating
+# reviewText: Review
+# overall: Product rating
+# summary: Review summary
+# unixReviewTime: Review time
+# reviewTime: Review time Raw
+# day_diff: Number of days elapsed since the review
+# helpful_yes: Number of times the review was found helpful
+# total_vote: Number of votes given to the review
+
+###################################################
+# TASK 1: Calculate the Weighted Average Rating based on Recent Reviews and Compare it with the Existing Average Rating.
+###################################################
+
+# In the shared dataset, users have given ratings and reviews for a product.
+# The aim of this task is to evaluate the ratings by weighting them according to the date.
+# It is necessary to compare the initial average rating with the weighted rating obtained based on the date.
 
 
 ###################################################
-# Adım 1: Veri Setini Okutunuz ve Ürünün Ortalama Puanını Hesaplayınız.
+# Step 1: Read the Data Set and Calculate the Average Rating of the Product.
+###################################################
+import pandas as pd
+
+amazon_rev = pd.read_csv("amazon_review.csv")
+avarage_rating = amazon_rev["overall"].mean()
+print(avarage_rating)
+
+###################################################
+# Step 2: Calculate the Weighted Average Rating Based on the Date.
+###################################################
+amazon_rev['rev_date'] = pd.to_datetime(amazon_rev['unixReviewTime'], unit='s')
+amazon_rev['time_weight'] = (amazon_rev['rev_date'] - amazon_rev['rev_date'].min()).dt.days + 1  # rev time?
+w_average = (amazon_rev['time_weight'] * amazon_rev['overall']).sum()
+w_average = w_average / amazon_rev['time_weight'].sum()
+print(w_average)
+
+###################################################
+# TASK 2: Determine the 20 Reviews to be Displayed on the Product Detail Page.
 ###################################################
 
 
 ###################################################
-# Adım 2: Tarihe Göre Ağırlıklı Puan Ortalamasını Hesaplayınız.
+# Step 1. Generate the helpful_no Variable.
 ###################################################
 
+# Note:
+# total_vote is the total number of up-down votes given to a review.
+# up means helpful.
+# there is no helpful_no variable in the dataset, it needs to be generated based on existing variables.
 
-
-
-###################################################
-# Görev 2: Ürün için Ürün Detay Sayfasında Görüntülenecek 20 Review'i Belirleyiniz.
-###################################################
-
-
-###################################################
-# Adım 1. helpful_no Değişkenini Üretiniz
-###################################################
-
-# Not:
-# total_vote bir yoruma verilen toplam up-down sayısıdır.
-# up, helpful demektir.
-# veri setinde helpful_no değişkeni yoktur, var olan değişkenler üzerinden üretilmesi gerekmektedir.
 
 
 ###################################################
-# Adım 2. score_pos_neg_diff, score_average_rating ve wilson_lower_bound Skorlarını Hesaplayıp Veriye Ekleyiniz
+# Step 2. Calculate score_pos_neg_diff, score_average_rating, and wilson_lower_bound Scores and Add to the Data.
 ###################################################
 
 
 ##################################################
-# Adım 3. 20 Yorumu Belirleyiniz ve Sonuçları Yorumlayınız.
+# Step 3. Determine and Interpret the Top 20 Reviews.
 ###################################################
-
-
